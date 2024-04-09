@@ -1,19 +1,19 @@
 "use client"
 import React, { useEffect } from 'react';
 import ReactPlayer from 'react-player';
-import { useParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 
-const Page = () => {
-  const { videoPath } = useParams(); // Get the video path from URL parameters
+const VideoPage = () => {
+  const router = useRouter();
+  const { videoPath } = router.query; // Access videoPath from URL parameters
 
   useEffect(() => {
     // Check for video path availability
     if (!videoPath) {
       // Handle the case where videoPath is missing (e.g., redirect back to the upload page)
-      
       return;
     }
-  }, [videoPath]);
+  }, [videoPath, router]); // Include router as a dependency
 
   return (
     <div>
@@ -26,4 +26,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default VideoPage;
