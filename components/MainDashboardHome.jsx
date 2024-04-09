@@ -4,60 +4,29 @@ import toast from 'react-hot-toast';
 import { BackgroundGradient } from "./ui/background-gradient";
 
 const MainDashboardHome = () => {
-
   const [selectedFile, setSelectedFile] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [results, setResults] = useState(null);
-  const [error, setError] = useState(null);
+  const [videoPath, setVideoPath] = useState(null); // Store the path of the uploaded video
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    // Check if the selected file is a video
     if (file && file.type.startsWith('video/')) {
       setSelectedFile(file);
-      setError(null); // Clear any previous errors
     } else {
-      setSelectedFile(null);
-      setError("Please select a valid video file");
-      toast.error("Please select a valid video file", {
-        style: {
-          border: '1px solid #713200',
-          padding: '16px',
-          color: '#713200',
-        },
-        iconTheme: {
-          primary: '#713200',
-          secondary: '#FFFAEE',
-        },
-        position: "top-right"
-      });
-      return; // Set error for wrong file format
+      toast.error("Please select a valid video file");
+      setSelectedFile(null); // Clear the selected file if it's not a video
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     if (!selectedFile) {
-      toast.error("Please select a video file first !! ", {
-        style: {
-          border: '1px solid #713200',
-          padding: '16px',
-          color: '#713200',
-        },
-        iconTheme: {
-          primary: '#713200',
-          secondary: '#FFFAEE',
-        },
-        position: "top-right"
-      });
+      toast.error("Please select a video file first!");
       return;
     }
 
     setProcessing(true);
-    setError(null);
-
     const formData = new FormData();
     formData.append("video", selectedFile);
 
@@ -66,44 +35,22 @@ const MainDashboardHome = () => {
         onUploadProgress: progressEvent => {
           const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
           setUploadProgress(progress);
+        },
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
       };
 
-    //   const response = await axios.post("/api/upload", formData, config);
-
-    //   if (!response.data.success) {
-    //     throw new Error(response.data.message || "Failed to upload video");
-    //   }
-      console.log(formData)
-      toast.success("File uploaded successfully", {
-        style: {
-          border: '1px solid #4CAF50',
-          padding: '16px',
-          color: '#4CAF50',
-        },
-        iconTheme: {
-          primary: '#4CAF50',
-          secondary: '#EBF8F6',
-        },
-        position: "top-right"
-      });
-
-    //   setResults(response.data.results); // Update results state with processed data
+      const response = await axios.post("http://127.0.0.1:5000/api/upload", formData, config);
+      setVideoPath(response.data.videoPath); // Set the path of the uploaded video
+      toast.success("Video uploaded successfully");
     } catch (error) {
-        console.log(formData)
       console.error(error);
-      setError("An error occurred during upload");
+      toast.error("An error occurred during upload");
     } finally {
       setProcessing(false);
     }
   };
-
-  useEffect(() => {
-    if (results) {
-      // Update UI to display processed video or results (e.g., detected objects)
-      console.log("Processed results:", results);
-    }
-  }, [results]);
 
   return (
     <div className="flex-1 overflow-scroll max-h-screen sm:bg-[#ffffff] bg-gray-100">
@@ -158,13 +105,7 @@ const MainDashboardHome = () => {
        </div>
       </form>
 
-      {results && (
-        <div>
-          <h2>Processed Results</h2>
-          {/* Update this section to display processed video or results */}
-          <p>Processed data: Result here</p>
-        </div>
-      )}
+    
 
     <div className="flex flex-col gap-2 mt-12 mb-4">
         <p className="w-full text-left px-12 text-4xl">Previous Uploads : </p>
