@@ -2,17 +2,21 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from 'react-hot-toast';
 import { BackgroundGradient } from "./ui/background-gradient";
+import ReactPlayer from 'react-player'; 
 
 const MainDashboardHome = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [videoPath, setVideoPath] = useState(null); // Store the path of the uploaded video
+  const [isVideoUpload, setIsVideoUploaded] = useState(false);
 
+  console.log(videoPath)
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith('video/')) {
       setSelectedFile(file);
+
     } else {
       toast.error("Please select a valid video file");
       setSelectedFile(null); // Clear the selected file if it's not a video
@@ -41,8 +45,19 @@ const MainDashboardHome = () => {
         }
       };
 
-      const response = await axios.post("http://127.0.0.1:5000/api/upload", formData, config);
+      const response = await axios.post("https://7842-103-4-222-252.ngrok-free.app/api/upload", formData, config);
       setVideoPath(response.data.videoPath); // Set the path of the uploaded video
+      setIsVideoUploaded(true);
+
+      if (response.data.videoPath) {
+        try {
+            window.location.href = `/video/${response.data.videoPath}`;
+        } catch (error) {
+            console.error("Error redirecting:", error);
+            // Handle any errors during redirection
+        }
+    }
+
       toast.success("Video uploaded successfully");
     } catch (error) {
       console.error(error);
@@ -54,7 +69,7 @@ const MainDashboardHome = () => {
 
   return (
     <div className="flex-1 overflow-scroll max-h-screen sm:bg-[#ffffff] bg-gray-100">
-      <p className="text-3xl text-center sm:text-5xl font-bold relative z-20 bg-clip-text text-transparent border-b-[1px] border-gray-400 bg-gradient-to-b from-neutral-500 to-neutral-800 py-8">
+      <p className="text-3xl text-center sm:text-5xl font-bold relative z-20 bg-clip-text text-transparent border-b-[1px] border-gray-400 bg-gradient-to-b from-neutral-500 to-neutral-800 py-8" >
         Home - Upload Videos
       </p>
       <form onSubmit={handleSubmit} className="mt-8">
@@ -77,7 +92,9 @@ const MainDashboardHome = () => {
                 />
               </svg>
               <p class="mb-2 text-xl text-gray-400">
-                <span class="font-bold">Click to upload</span>
+                {isVideoUpload ? <span class="font-bold">Uploaded Video Path : {videoPath}</span> :
+                    <span class="font-bold">Click to upload</span>
+                }
               </p>
               <p class="text-sm font-semibold text-gray-400">Video</p>
             </div>
@@ -86,6 +103,7 @@ const MainDashboardHome = () => {
               name="video"
               onChange={handleFileChange}
               class="hidden"
+              disabled={isVideoUpload && true}
             />
           </label>
         </div>
@@ -93,20 +111,19 @@ const MainDashboardHome = () => {
           disabled={processing} 
           {processing ? "Processing..." : "Upload"}
           */}
+
        <div className=" w-full mt-8 flex justify-center items-center">
-           
+
        <button    type="submit"
           disabled={processing} className="px-8 py-2 rounded-full bg-gradient-to-b from-blue-500 to-blue-600 text-white focus:ring-2 focus:ring-blue-400 hover:shadow-xl transition duration-200">
          {processing ? "Processing..." : "Upload"}
         </button>
   
 
-      
        </div>
       </form>
 
     
-
     <div className="flex flex-col gap-2 mt-12 mb-4">
         <p className="w-full text-left px-12 text-4xl">Previous Uploads : </p>
     <div className="max-w-full flex flex-col gap-4 mt-4 px-8">
