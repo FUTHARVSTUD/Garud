@@ -7,18 +7,20 @@ const VideoPage = () => {
   const router = useRouter();
   const { videoPath } = router.query; // Access videoPath from URL parameters
 
+  const localVideoUrl = `@/uploads/${videoPath}`; // Use a descriptive variable name
+
   useEffect(() => {
     // Check for video path availability
     if (!videoPath) {
       // Handle the case where videoPath is missing (e.g., redirect back to the upload page)
       return;
     }
-  }, [videoPath, router]); // Include router as a dependency
+  }, [videoPath]); // Dependency on videoPath is sufficient
 
   return (
     <div>
       <ReactPlayer
-        url={`/api/stream/${videoPath}`} // Construct the streaming URL
+        url={localVideoUrl} // Construct the local video URL
         playing={true}
         controls={true}
       />
