@@ -4,7 +4,7 @@ import React from 'react'
 
 const Sidebar = () => {
 
-
+   const whichSection = useLoginModalState((state) => state.whichSection)
    const updateWhichSection = useLoginModalState((state) => state.updateWhichSection)
 
   return (
@@ -12,19 +12,19 @@ const Sidebar = () => {
    <div className="h-full px-3 py-4 overflow-y-auto bg-gray-200 flex flex-col">
       <ul className="space-y-4 mt-12 font-medium flex-grow">
          <li className='cursor-pointer' onClick={()=>updateWhichSection("home")}>
-            <a  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <a  className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-blue-200 group ${whichSection === "home" && "bg-blue-300"} `}>
                <img src='/home-svgrepo-com.svg' className="w-7 h-7 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"/>
                <span className="ms-3 text-lg">Home</span>
             </a>
          </li>
          <li className='cursor-pointer'  onClick={()=>updateWhichSection("live-stream")}>
-            <a  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <a  className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-blue-200 group  ${whichSection === "live-stream" && "bg-blue-300"} `}>
             <img src='/live-svgrepo-com.svg' className="w-7 h-7 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"/>
                <span className="flex-1 ms-3 text-lg whitespace-nowrap">Live Stream</span>
             </a>
          </li>
          <li className='cursor-pointer'  onClick={()=>updateWhichSection("about-team")}>
-            <a  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+         <a  className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-blue-200 group  ${whichSection === "about-team" && "bg-blue-300"} `}>
                <img src="/about-filled-svgrepo-com.svg" className="w-7 h-7 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"/>
                <span className="flex-1 ms-3 text-lg whitespace-nowrap">About Team</span>            
             </a>
